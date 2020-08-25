@@ -1,0 +1,29 @@
+{% extends 'admin/change_form.html' %}
+
+{% block submit_buttons_bottom %}
+<div id="content-main">
+    <div>
+        {% csrf_token %}
+        <button type="button" class="button" id="genrator">Generate Configurations</button>
+
+        {{ block.super }}
+    </div>
+
+    <pre id="layout"></pre>
+    <script>
+        (function($) {
+            $("#genrator").click(function() {
+                $.ajax({
+                    type:"POST",
+                    url: "/generator",
+                    data: $('#client_form').serialize(),
+                    success: function( response ) 
+                    {
+                        $("#layout").text(response);
+                    },
+                })
+            });
+        })(django.jQuery);
+    </script>
+</div>
+{% endblock %}
