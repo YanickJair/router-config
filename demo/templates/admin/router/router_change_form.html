@@ -9,6 +9,7 @@
         {{ block.super }}
     </div>
 
+    <label id="success-label"></label>
     <pre id="layout"></pre>
     <script>
         (function($) {
@@ -20,6 +21,7 @@
                     success: function( response ) 
                     {
                         $("#layout").text(response);
+                        $("#success-label").css({ 'color': 'green' }).text("Client Saved");
                     },
                 })
             });
