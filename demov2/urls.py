@@ -6,5 +6,6 @@ from django.views.generic.base import RedirectView
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^$', RedirectView.as_view(url='/admin')), # Make it go to the Admin page
-    url(r'^',  include('demo.urls'))
+    url(r'^',  include('demo.urls')),
+    url(r'^treewidget/', include('treewidget.urls')),
 ]

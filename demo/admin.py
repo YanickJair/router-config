@@ -1,8 +1,5 @@
-from django import forms
 from django.contrib import admin
-
-from django.template.response import TemplateResponse
-from django.urls import path
+from django_mptt_admin.admin import DjangoMpttAdmin
 
 from . import models
 
@@ -14,4 +11,7 @@ class ClientAdmin(admin.ModelAdmin):
     change_form_template = 'admin/router/router_change_form.html'
 
 
-admin.site.register(models.Equipment)
+@admin.register(models.Equipment)
+class EquipmentAdmin(DjangoMpttAdmin):
+    pass
+

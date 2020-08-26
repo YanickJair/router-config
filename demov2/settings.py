@@ -37,7 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'demo'
+    'treebeard',
+    'treewidget',
+    'django_mptt_admin',
+    'demo',
+    'mptt'
 ]
 
 MIDDLEWARE = [
