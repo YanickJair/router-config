@@ -6,9 +6,12 @@ from django.urls import path
 
 from . import models
 
+@admin.register(models.Customer)
 class ClientAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'ip', 'hostname', 'address', 'created_at', 'updated_at')
+    list_display_links = ('id', 'name', 'ip', 'hostname', 'address', 'created_at', 'updated_at')
+    exclude = ('created_at', 'updated_at')
     change_form_template = 'admin/router/router_change_form.html'
 
-# Register your models here.
-admin.site.register(models.Router)
-admin.site.register(models.Client, ClientAdmin)
+
+admin.site.register(models.Equipment)

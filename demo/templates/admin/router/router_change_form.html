@@ -4,9 +4,15 @@
 <div id="content-main">
     <div>
         {% csrf_token %}
-        <button type="button" class="button" id="genrator">Generate Configurations</button>
 
         {{ block.super }}
+
+        <input
+            type="submit"
+            class="default"
+            id="genrator"
+            value="Generate Configurations"
+            style="float: right;">
     </div>
 
     <label id="success-label"></label>
@@ -17,11 +23,11 @@
                 $.ajax({
                     type:"POST",
                     url: "/generator",
-                    data: $('#client_form').serialize(),
+                    data: $('#customer_form').serialize(),
                     success: function( response ) 
                     {
                         $("#layout").text(response);
-                        $("#success-label").css({ 'color': 'green' }).text("Client Saved");
+                        $("#success-label").css({ 'color': 'green' }).text(response);
                     },
                 })
             });

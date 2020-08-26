@@ -1,63 +1,70 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django import forms
 from django.db.models import Q
 from django.template import Context, Template
+from django.utils import timezone
+from datetime import datetime
+
+import demo.forms as df
 
 from . import models
 
 def generator(request):
     if request.method == 'POST':
-        _input = request.POST
-        router = models.Router.objects.get(id=_input['router'])
+        try:
+            form = df.CustomerForm(request.POST)
+            if form.is_valid():
+                _input = request.POST
+                equipement = models.Equipment.objects.get(id=_input['equipement'])
 
-        client = models.Client.objects.filter(
-            Q(ip=_input['ip'])
-            | Q(hostname=_input['hostname'])
-        )
+                customer = models.Customer.objects.filter(
+                    Q(ip=_input['ip'])
+                    | Q(hostname=_input['hostname'])
+                )
 
-        if client.exists():
-            info = get_client_info(_input)
-            client.update(**info)
-            template = get_rendered_template(client.get(), router.layout)
-        else:
-            client = models.Client(
-                ip=_input['ip'],
-                hostname=_input['hostname'],
-                client_name=_input['client_name'],
-                address=_input['address'],
-                router=router
-            )
-            client.save()
-            template = get_rendered_template(client, router.layout)
-        print(template)
-        return HttpResponse(template)
+                if customer.exists():
+                    info = get_customer_info(_input)
+                    customer.update(**info, updated_at=datetime.now(tz=timezone.utc))
+                    template = get_rendered_template(customer.get(), equipement.layout)
+
+                else:
+                    customer = models.Customer(
+                        ip=_input['ip'],
+                        hostname=_input['hostname'],
+                        name=_input['name'],
+                        address=_input['address'],
+                        equipement=equipement
+                    )
+                    customer.save()
+                    template = get_rendered_template(customer, equipement.layout)
+                return HttpResponse(template)
+        except:
+            raise
     return HttpResponse("Bad Request")
 
-
-
-def get_rendered_template(client, layout):
+def get_rendered_template(customer, layout):
     #* Create a Template from layout and a Context dict using the input data
     template = Template(layout)
     context = Context({
-        'IP': client.ip,
-        'HOSTNAME': client.hostname,
-        'CLIENT_NAME': client.client_name,
-        'MORADA': client.address
+        'IP': customer.ip,
+        'HOSTNAME': customer.hostname,
+        'CLIENT_NAME': customer.name,
+        'MORADA': customer.address
     })
 
     return template.render(context)
 
 #* Create a dict for client so can be used when updating
-def get_client_info(_client):
+def get_customer_info(_customer):
     info = {}
 
-    set_field('ip', info, _client)
-    set_field('hostname', info, _client)
-    set_field('client_name', info, _client)
-    set_field('address', info, _client)
-    set_field('router', info, _client)
+    set_field('ip', info, _customer)
+    set_field('hostname', info, _customer)
+    set_field('name', info, _customer)
+    set_field('address', info, _customer)
+    set_field('router', info, _customer)
 
     return info if len(info.keys()) else None
 
